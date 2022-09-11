@@ -1,33 +1,42 @@
+from ctypes import pointer
 import sys
 
 class StaticArray:
 
-    def __init__(self, size: int, type: type):
+    def __init__(self, size: int, dtype: type):
         self.size = size
-        self.dtype = type
+        self.dtype = dtype
         self.pointer = 0
+        self.length = 0
         self.values = [None] * size
 
     def __getitem__(self, index):
-        if index < -self.size or index > self.size:
+        if index < -self.size or index >= self.size:
             raise IndexError(f"index {index} out of bounds")
         return self.values[index]
 
     def __setitem__(self, index, item):
-        if index < -self.size or index > self.size:
+        if index < -self.size or index >= self.size:
             raise IndexError(f"Index {index} out of bounds")
         if type(item) != self.dtype:
             raise TypeError(f"Incompatible type for array")
-        self.values[index] = item
+
+        self.length += 1
+        if index >= self.pointer: 
+            self.values[self.pointer] = item
+            self.pointer += 1
+        else:
+            self.values[index] = item
 
     def insert(self, index, item):
-        if index < -self.size or index > self.size:
+        if index < -self.size or index >= self.size:
             raise IndexError(f"Index {index} out of bounds")
         if self.__len__() == self.size:
             raise ValueError(f"Array is full")
         if type(item) != self.dtype:
             raise TypeError(f"Incompatible type for array")
-
+        
+        self.length += 1
         if index >= self.pointer:
             self.values[self.pointer] = item
             self.pointer += 1
@@ -42,6 +51,7 @@ class StaticArray:
                     self.values[i] = value
                     value = temp
                 self.pointer += 1
+    
                 return None
                         
     def append(self, item):
@@ -49,21 +59,24 @@ class StaticArray:
             raise ValueError(f"Array is full")
         if type(item) != self.dtype:
             raise TypeError("Incompatible type for array")
+
+        self.length += 1
         self.values[self.pointer] = item
         self.pointer += 1
 
     def remove(self, index=None):
         if not self.__len__():
             raise ValueError(f"Array is empty")
+        if index is not None:
+            if index < -self.size or index >= self.size:
+                raise IndexError(f"Index {index} out of bounds")
+
+        self.length -= 1
+        self.pointer -= 1
         if index is None:
-            self.pointer -= 1
             item = self.values[self.pointer]
             self.values[self.pointer] = None
             return item
-        if index < -self.size or index > self.size:
-            raise IndexError(f"Index {index} out of bounds")
-
-        self.pointer -= 1
         if index >= self.pointer:
             item = self.values[self.pointer]
             self.values[self.pointer] = None
@@ -83,19 +96,18 @@ class StaticArray:
         return sys.getsizeof(self.values)
 
     def __len__(self):
-        return self.size - self.values.count(None)
+        return self.length
 
     def __str__(self):
         return f"{self.values}"
 
 if __name__ == "__main__":
-    array = StaticArray(10, int)
-    for i in range(8):
-        array.append(i)
-    print(array)
-    array.remove(5)
-    print(array)
-    print(len(array))
+    array = StaticArray(10, float)
+
+    
+
+        
+    
     
    
 
