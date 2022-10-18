@@ -48,12 +48,19 @@ class InsertionSort():
 
         return self.recursive(arr, i + 1) # go to next subarray
 
+    def __call__(self, arr, recursive=False):
+        if recursive:
+            return self.recursive(arr)
+        return self.iterative(arr)
+
 if __name__ == "__main__":
     n = 15
     arr = list(np.random.randint(-10, 10, (n, )))
     print(arr)
-    print(InsertionSort().iterative(arr.copy()))
-    print(InsertionSort().recursive(arr.copy()))
+    sort = InsertionSort()
+    print(sort(arr))
+    print(sort(arr, recursive=True))
+    
     
 
 
