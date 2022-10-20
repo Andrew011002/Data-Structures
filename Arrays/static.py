@@ -16,6 +16,7 @@ class StaticArray:
         # invalid dtype
         if type(item) is not self.dtype:
             raise TypeError("Invalid dtype")
+
         # add item updating attributes
         self.array[self.pointer] = item
         self.pointer += 1
@@ -31,12 +32,13 @@ class StaticArray:
         # invalid dtype
         if type(item) is not self.dtype:
             raise TypeError("Invalid dtype")
+
         # index less than (converted)
         index = index + self.size if index < 0 else index
 
         # place at specified location or most open position
 
-        # greater than pointer
+        # greater than pointer (add to end)
         if index >= self.pointer:
             self.append(item)
             return None
@@ -46,12 +48,13 @@ class StaticArray:
         self.array[index] = item
         index += 1
         item = tmp
-        # shift any elements right 1
-        while item is not None and index <= self.pointer:
-            tmp = self.array[index]
-            self.array[index] = item
+
+        # shift any elements right 1\
+        for i in range(index, self.pointer + 1):
+            tmp = self.array[i]
+            self.array[i] = item
             item = tmp
-            index += 1
+
         # update length & pointer
         self.length += 1
         self.pointer += 1
@@ -63,26 +66,32 @@ class StaticArray:
         # wrong dtype
         if type(item) is not self.dtype:
             raise TypeError("Invalid dtype")
+
+        found = False # flag
         
-        # locate the item
+        # locate item
         for i in range(self.pointer):
+            # item found
             if self.array[i] == item:
                 self.array[i] = None
+                found = True
                 index = i
                 break
-            
-        # element not located
-        if self.array[i] is not None:
-            raise ValueError("Item not in Array")
+        
+        # item not in the array
+        if not found:
+            raise ValueError("The item is not in the array")
 
         # shift items left most
-        for i in range(index + 1, self.pointer + 1):
-            self.array[index] = self.array[i]
-            index += 1
-
-        # update pointer and size
+        for i in range(index, self.pointer - 1):
+            tmp = self.array[i + 1]
+            self.array[i + 1] = None
+            self.array[i] = tmp
+        
+        # adjust attributes
         self.pointer -= 1
         self.length -= 1
+
         return item
 
     def __getitem__(self, index):
@@ -107,20 +116,27 @@ class StaticArray:
         # add at desired position
         else:
             self.array[index] = item
-        
-        
 
+    def __iter__(self):
+        return iter(self.array)
 
     def __len__(self):
         return self.length
 
     def __str__(self):
         return str(self.array)
+
+
     
 
 if __name__ == "__main__":
-    arr = StaticArray(5, int)
-    pass
+    arr = StaticArray(10, int)
+    for i in range(10):
+        arr.append(i * i)
+
+    print(arr)
+    for val in arr:
+        print(val)
 
     
 
