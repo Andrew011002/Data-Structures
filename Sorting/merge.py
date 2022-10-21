@@ -5,7 +5,7 @@ class MergeSort:
     def mergeSort(self, arr, start, end):
         
         # base case of sorted array (len == 1)
-        if end - start + 1 == 1:
+        if end - start + 1 <= 1:
             return arr
 
         mid = (start + end) // 2 # mid point (floored)
