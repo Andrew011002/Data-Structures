@@ -136,8 +136,6 @@ if __name__ == "__main__":
 
     arr.remove(0)
     print(arr)
-    arr.insert(5, 10)
-    print(arr)
 
     
 
