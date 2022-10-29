@@ -134,9 +134,10 @@ if __name__ == "__main__":
     for i in range(10):
         arr.append(i * i)
 
+    arr.remove(0)
     print(arr)
-    for val in arr:
-        print(val)
+    arr.insert(5, 10)
+    print(arr)
 
     
 
